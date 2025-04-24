@@ -1,0 +1,17 @@
+{
+    "name": "Ruby",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "sorbet.sorbet-vscode-extension",
+                "Shopify.ruby-extensions-pack"
+            ]
+        }
+    },
+    "remoteUser": "root",
+    "postCreateCommand": "apt-get update && apt-get install -y xdg-utils"
+}
+
