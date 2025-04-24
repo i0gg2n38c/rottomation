@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'automation_logger'
+require_relative 'rottomation_logger'
 
 module Automation
   module IO
