@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-module Automation
+module Rottomation
   module Config
     # TODO: Document
     # comment

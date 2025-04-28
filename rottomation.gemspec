@@ -3,19 +3,16 @@
 Gem::Specification.new do |s|
   s.name        = 'rottomation'
   s.version     = '0.1.0'
-  s.summary     = 'Automation Framework'
-  s.description = 'Automation Framework description'
+  s.summary     = 'Ruby Automation Framework'
+  s.description = 'Automation Framework written in Ruby, leveraging Selenium'
   s.authors     = ['dv']
   s.email       = 'email@email.net'
   s.files       = Dir['lib/**/*', 'LICENSE', 'README.md']
   s.homepage    = 'https://github.com/404'
   s.license     = 'MIT'
 
-  # Runtime dependencies - these are required for the gem to function
   s.add_dependency 'money'
   s.add_dependency 'selenium-webdriver'
-
-  # Development dependencies - these are only needed for development/testing of the gem itself
   s.add_development_dependency 'debase'
   s.add_development_dependency 'parallel_tests'
   s.add_development_dependency 'pry'

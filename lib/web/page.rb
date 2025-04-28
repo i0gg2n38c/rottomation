@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Automation
+module Rottomation
   module Pages
     # Top Level Comment
-    class BasePage
+    class Page
       QUERY_PARSER = URI::Parser.new
 
       attr_reader :driver, :url
@@ -12,7 +12,7 @@ module Automation
         @driver = driver
         @base_url = base_url
         @url = build_uri_with_query(
-          (base_url.nil? ? Automation::Config::Configuration.config['environment']['base_url'] : base_url) + uri,
+          (base_url.nil? ? Rottomation::Config::Configuration.config['environment']['base_url'] : base_url) + uri,
           query
         )
         @default_wait = Selenium::WebDriver::Wait.new(timeout: 3,
@@ -45,13 +45,14 @@ module Automation
       rescue Selenium::WebDriver::Error::MoveTargetOutOfBoundsError => e
         raise e unless should_try_scrolling_up
 
-        # parse the exception if it's MoveTargetOutOfBoundsError. If the Y coordinate is negative, we might just need 
-        # to scroll up a bit for the item to appear again. Namely, self-collapsing headers. This let's this just  
+        # parse the exception if it's MoveTargetOutOfBoundsError. If the Y coordinate is negative, we might just need
+        # to scroll up a bit for the item to appear again. Namely, self-collapsing headers. This let's this just
         # automatically attempt to handle it if the item is outside the viewport, we'll scroll until it's in view.
         coordinates = e.message.match(/\((-?\d+), (-?\d+)\)/).captures
         # x = coordinates[0].to_i
         y = coordinates[1].to_i
         raise e unless y.negative?
+
         @driver.log_info log: "Y coordinate is negative: #{y}, scrolling up and retrying"
         @driver.driver_instance.action.scroll_by(0, -250).pause(duration: 1).perform
         move_to_element(element: element, element_name: element_name, should_try_scrolling_up: false)
@@ -73,10 +74,10 @@ module Automation
       def click_element(element:, element_name:)
         @driver.log_info(log: "Clicking element #{element_name}")
         @default_wait.until do
-            element.click
-            true
-          rescue Selenium::WebDriver::Error::ElementNotInteractableError
-            false
+          element.click
+          true
+        rescue Selenium::WebDriver::Error::ElementNotInteractableError
+          false
         end
       end
 
@@ -86,7 +87,7 @@ module Automation
         @default_wait.until { driver.driver_instance.execute_script('return document.readyState') == 'complete' }
         return if driver.current_url.start_with? @url
 
-        raise Automation::Errors::IllegalStateException, "Expected URL #{url}, but got #{driver.current_url}"
+        raise Rottomation::Errors::IllegalStateException, "Expected URL #{url}, but got #{driver.current_url}"
       end
 
       def build_uri_with_query(base_path, query)

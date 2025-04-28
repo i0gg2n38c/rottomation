@@ -87,6 +87,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  base64
   debase
   money
   parallel_tests

@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 group :development, :test do
+  gem 'base64'
   gem 'debase'
   gem 'money'
   gem 'parallel_tests'

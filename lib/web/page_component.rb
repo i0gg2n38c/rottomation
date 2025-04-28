@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Automation
+module Rottomation
   module Pages
     # Top Level Comment
-    class BasePageComponent
+    class PageComponent
       attr_reader :driver, :page
 
       def initialize(driver:, page:)

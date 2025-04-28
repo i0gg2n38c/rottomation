@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Automation
+module Rottomation
   module Errors
     # Base error class for all automation errors
     class AutomationError < StandardError

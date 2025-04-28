@@ -9,7 +9,7 @@ require 'selenium-webdriver'
 require_relative 'requires'
 
 # Main module for the automation framework
-module Automation
+module Rottomation
   class Error < StandardError; end
 
   VERSION = '0.1.0'
@@ -18,7 +18,7 @@ module Automation
     attr_accessor :configuration
 
     def configure
-      self.configuration ||= Automation::Config::Configuration.new
+      self.configuration ||= Rottomation::Config::Configuration.new
       yield(configuration) if block_given?
     end
 
@@ -34,4 +34,4 @@ module Automation
 end
 
 # Set default configuration
-Automation.configure
+Rottomation.configure

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Automation
+module Rottomation
   module IO
     # Default Logger Class
-    class AutomationLogger
+    class RottomationLogger
       attr_reader :test_name
 
       def initialize(test_name:)

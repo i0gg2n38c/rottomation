@@ -2,11 +2,10 @@
 
 require 'rspec'
 require_relative 'spec_helper'
-require_relative '../lib/automation'
 
 # Tests
-RSpec.describe Automation::AutomationDriverWrapper do # rubocop:disable RSpec/MultipleDescribes
-  let(:logger) { Automation::IO::AutomationLogger.new(test_name: described_class.to_s) }
+RSpec.describe Rottomation::IO::RottomationDriverWrapper do # rubocop:disable RSpec/MultipleDescribes
+  let(:logger) { Rottomation::IO::RottomationLogger.new(test_name: described_class.to_s) }
   let(:ldw) { described_class.new(logger: logger) }
 
   after { ldw.driver_instance&.quit }
@@ -18,9 +17,9 @@ RSpec.describe Automation::AutomationDriverWrapper do # rubocop:disable RSpec/Mu
   end
 end
 
-RSpec.describe Automation::Pages::BasePage do
-  let(:logger) { Automation::IO::AutomationLogger.new test_name: described_class.to_s }
-  let(:ldw) { Automation::AutomationDriverWrapper.new logger: logger }
+RSpec.describe Rottomation::Pages::Page do
+  # let(:logger) { Rottomation::IO::RottomationLogger.new test_name: described_class.to_s }
+  let(:ldw) { Rottomation::IO::RottomationDriverWrapper.new test_name: described_class.to_s }
 
   after { ldw.driver_instance&.quit }
 
@@ -34,32 +33,8 @@ RSpec.describe Automation::Pages::BasePage do
   end
 end
 
-RSpec.describe Automation::BaseClient do
-  let(:logger) { Automation::IO::AutomationLogger.new test_name: described_class.to_s }
-  let(:client) do
-    described_class.new(logger: logger,
-                        auth_type: :basic,
-                        uri: 'https://postman-echo.com/',
-                        token: 'Basic cG9zdG1hbjpwYXNzd29yZA==') # Provided by Postman for testing
-  end
-
-  example 'It can authenticate with Basic Auth' do # rubocop:disable RSpec/NoExpectationExample
-    api = PostmanBasicAuthEchoApi.new(client: client)
-    client.get api: api
-    api.assert_good_response_code
-  end
-
-  example 'It can post request bodies' do # rubocop:disable RSpec/NoExpectationExample
-    api = PostmanPostEchoApi.new(client: client)
-    api.set_request_body request_body: '{"test":"value"}'
-    client.post api: api
-    api.assert_good_response_code
-    logger.log_info log: api.response_json
-  end
-end
-
 # Demonstration Classes
-class DuckDuckGoHomePage < Automation::Pages::BasePage
+class DuckDuckGoHomePage < Rottomation::Pages::Page
   def initialize(driver:)
     super(driver: driver, base_url: 'https://duckduckgo.com/')
   end
@@ -69,7 +44,10 @@ class DuckDuckGoHomePage < Automation::Pages::BasePage
     web_element = @driver.find_elements(xpath: '//input[@id="searchbox_input"]',
                                         element_name: 'search field')
                          .first || raise(IndexError, 'Could not find prose')
-    @driver.submit_text(element: web_element, element_name: 'search field', content: query)
+    @driver.submit_text(element: web_element,
+                        element_name: 'search field',
+                        content: query,
+                        additional_chars: Selenium::WebDriver::Keys[:return])
     wait.until do
       @driver.find_element(xpath: '//div[@class="results--main"]',
                            element_name: '').displayed?
@@ -77,20 +55,55 @@ class DuckDuckGoHomePage < Automation::Pages::BasePage
   end
 end
 
-class GoogleHomePage < Automation::Pages::BasePage
+class GoogleHomePage < Rottomation::Pages::Page
   def initialize(driver:)
     super driver: driver, uri: ''
   end
 end
 
-class PostmanBasicAuthEchoApi < Automation::BaseApi
+class PostmanBasicAuthEchoApi < Rottomation::HttpRequest
   def resource_path
     'basic-auth'
   end
 end
 
-class PostmanPostEchoApi < Automation::BaseApi
+class PostmanPostEchoApi < Rottomation::HttpRequest
   def resource_path
     'post'
+  end
+end
+
+class PostmanBasicAuthEchoService < Rottomation::HttpService
+  def self.get(logger:, auth_context:)
+    request = Rottomation::HttpRequestBuilder.new(url: 'https://postman-echo.com/', method_type: :get)
+                                             .with_header('Authorization', auth_context.basic_auth)
+                                             .build
+
+    execute_request(logger: logger, request: request)
+  end
+
+  def self.get(logger:)
+    request = Rottomation::HttpRequestBuilder.new(url: 'https://postman-echo.com/', method_type: :get)
+                                             .with_header('Authorization', 'Basic cG9zdG1hbjpwYXNzd29yZA==')
+                                             .build
+
+    execute_request(logger: logger, request: request)
+  end
+end
+
+RSpec.describe PostmanBasicAuthEchoService do
+  let(:logger) { Rottomation::IO::RottomationLogger.new test_name: described_class.to_s }
+  let(:context) { Rottomation::AuthContext.new(username: 'postman', password: 'password') }
+
+  example 'It can authenticate with Basic Auth' do
+    resp = described_class.get(logger: logger)
+    expect(resp.code).to eq 302
+    expect(resp.body).to include('Found.')
+  end
+
+  example 'It can authenticate with Basic Auth leveraging a session context' do
+    resp = described_class.get(logger: logger)
+    expect(resp.code).to eq 302
+    expect(resp.body).to include('Found.')
   end
 end

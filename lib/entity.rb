@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Automation
+module Rottomation
   # Comment
-  class BaseEntity
+  class Entity
     def to_s
       JSON.pretty_generate(to_hash)
     end

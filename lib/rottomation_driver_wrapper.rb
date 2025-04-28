@@ -2,16 +2,16 @@
 
 require_relative 'rottomation_logger'
 
-module Automation
+module Rottomation
   module IO
     # Driver Wrapper
-    class AutomationDriverWrapper < AutomationLogger
+    class RottomationDriverWrapper < RottomationLogger
       attr_accessor :environment_url, :grid_hub_url, :driver_instance
 
       def initialize(test_name:) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
         super(test_name: test_name)
-        @environment_url = Automation::Config::Configuration.config['environment']['base_url']
-        @grid_hub_url = Automation::Config::Configuration.config['selenium']['grid_url']
+        @environment_url = Rottomation::Config::Configuration.config['environment']['base_url']
+        @grid_hub_url = Rottomation::Config::Configuration.config['selenium']['grid_url']
 
         log_info log: "Using Environment: #{environment_url}}"
         log_info log: "Using Grid Bub: #{environment_url}}"
@@ -23,7 +23,7 @@ module Automation
         log_info log: "Using Node: #{@driver_instance.session_id}}"
         @driver_instance.manage.window.maximize
         @driver_instance.manage.timeouts.implicit_wait = 3
-        return unless Automation::Config::Configuration.config['environment']['head_on']
+        return unless Rottomation::Config::Configuration.config['environment']['head_on']
 
         run_head_on(url: @grid_hub_url, driver: @driver_instance)
       end
