@@ -3,37 +3,9 @@
 require 'rspec'
 require_relative 'spec_helper'
 
-# Tests
-RSpec.describe Rottomation::IO::RottomationDriverWrapper do # rubocop:disable RSpec/MultipleDescribes
-  let(:logger) { Rottomation::IO::RottomationLogger.new(test_name: described_class.to_s) }
-  let(:ldw) { described_class.new(logger: logger) }
-
-  after { ldw.driver_instance&.quit }
-
-  it 'can be created' do
-    page = DuckDuckGoHomePage.new driver: ldw
-    page.get
-    expect(page.driver.driver_instance.title).to include 'DuckDuckGo'
-  end
-end
-
-RSpec.describe Rottomation::Pages::Page do
-  # let(:logger) { Rottomation::IO::RottomationLogger.new test_name: described_class.to_s }
-  let(:ldw) { Rottomation::IO::RottomationDriverWrapper.new test_name: described_class.to_s }
-
-  after { ldw.driver_instance&.quit }
-
-  example 'it can be searched' do # rubocop:disable RSpec/MultipleExpectations,RSpec/ExampleLength
-    page = DuckDuckGoHomePage.new driver: ldw
-    page.get
-    expect(page.driver.driver_instance.title).to include 'DuckDuckGo'
-    search = 'bitcoin'
-    page.type_search_and_hit_enter(query: search)
-    expect(page.driver.driver_instance.title).to eq "#{search} at DuckDuckGo"
-  end
-end
-
-# Demonstration Classes
+##############################################################################################################
+##################################### Resources ##############################################################
+##############################################################################################################
 class DuckDuckGoHomePage < Rottomation::Pages::Page
   def initialize(driver:)
     super(driver: driver, base_url: 'https://duckduckgo.com/')
@@ -88,6 +60,36 @@ class PostmanBasicAuthEchoService < Rottomation::HttpService
                                              .build
 
     execute_request(logger: logger, request: request)
+  end
+end
+
+##############################################################################################################
+######################################## Tests ###############################################################
+##############################################################################################################
+RSpec.describe Rottomation::IO::RottomationDriverWrapper do # rubocop:disable RSpec/MultipleDescribes
+  let(:ldw) { described_class.new(test_name: described_class.to_s) }
+
+  after { ldw.driver_instance&.quit }
+
+  it 'can be created' do
+    page = DuckDuckGoHomePage.new driver: ldw
+    page.get
+    expect(page.driver.driver_instance.title).to include 'DuckDuckGo'
+  end
+end
+
+RSpec.describe Rottomation::Pages::Page do
+  let(:ldw) { Rottomation::IO::RottomationDriverWrapper.new test_name: described_class.to_s }
+
+  after { ldw.driver_instance&.quit }
+
+  example 'it can be searched' do # rubocop:disable RSpec/MultipleExpectations,RSpec/ExampleLength
+    page = DuckDuckGoHomePage.new driver: ldw
+    page.get
+    expect(page.driver.driver_instance.title).to include 'DuckDuckGo'
+    search = 'bitcoin'
+    page.type_search_and_hit_enter(query: search)
+    expect(page.driver.driver_instance.title).to eq "#{search} at DuckDuckGo"
   end
 end
 
