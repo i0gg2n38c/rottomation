@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rspec'
 require_relative '../config/configuration'
 require_relative '../lib/rottomation'
 

@@ -100,16 +100,12 @@ module Rottomation
       end
 
       def normalize_query(query)
-        case query
-        when String
-          decode_query(query)
-        when Hash
-          query.transform_keys(&:to_s)
-        when Array
-          query.each_slice(2).to_h
-        else
-          {}
-        end
+        return query.to_h if query.respond_to?(:to_h)
+        return {} if query.nil?
+
+        URI.decode_www_form(query.to_s).to_h
+      rescue StandardError
+        {}
       end
 
       def decode_query(query_string)
