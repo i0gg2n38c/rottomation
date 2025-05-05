@@ -79,6 +79,18 @@ class JsonPlaceHolderService < Rottomation::HttpService
     JSON.parse(resp.body).map { |comment| Comment.new(comment) }
   end
 
+  def self.new_post(logger:, post:)
+    # This web application requires specifying the charset in the header Otherwise we only get the ID back in
+    #  the return vs the whole Post entity.
+    request = Rottomation::HttpRequestBuilder.new(url: "#{BASE_URL}posts", method_type: :post)
+                                             .with_header('Content-Type', 'application/json; charset=UTF-8')
+                                             .with_body(post)
+                                             .build
+
+    resp = execute_request(logger: logger, request: request)
+    Post.new(JSON.parse(resp.body))
+  end
+
   class Post < Rottomation::Entity
     attr_reader :user_id, :id, :title, :body
 
@@ -174,5 +186,12 @@ RSpec.describe JsonPlaceHolderService do
   example 'It returns a single post' do
     resp = described_class.comments_for_post(logger: logger, post_id: 1)
     expect(resp[0].id).to eq 1
+  end
+
+  example 'It supports creating a new Post' do
+    post_title = 'title'
+    resp = described_class.new_post(logger: logger, post: { title: post_title, body: 'body', userId: 1 })
+    expect(resp.id).not_to be_nil
+    expect(resp.title).to eq post_title
   end
 end
