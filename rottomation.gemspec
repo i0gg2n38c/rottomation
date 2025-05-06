@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ['dv']
   s.email       = 'email@email.net'
   s.files       = Dir['lib/**/*', 'LICENSE', 'README.md']
+  s.require_paths = ['lib']
   s.homepage    = 'https://github.com/404'
   s.license     = 'MIT'
 

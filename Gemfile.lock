@@ -1,3 +1,10 @@
+PATH
+  remote: .
+  specs:
+    rottomation (0.1.0)
+      money
+      selenium-webdriver
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -33,7 +40,7 @@ GEM
     rbs (3.8.1)
       logger
     regexp_parser (2.9.2)
-    rexml (3.4.0)
+    rexml (3.4.1)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -72,7 +79,7 @@ GEM
       ruby-lsp (~> 0.23.0)
     ruby-progressbar (1.13.0)
     rubyzip (2.4.1)
-    selenium-webdriver (4.27.0)
+    selenium-webdriver (4.32.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -87,17 +94,15 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  base64
   debase
-  money
   parallel_tests
   pry
+  rottomation!
   rspec
   rubocop
   rubocop-rspec
   ruby-debug-ide
   ruby-lsp-rspec
-  selenium-webdriver
 
 BUNDLED WITH
    2.5.16

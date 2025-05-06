@@ -10,9 +10,10 @@ module Rottomation
 
       def initialize(driver:, base_url: nil, uri: '', query: [])
         @driver = driver
-        @base_url = base_url
+        @base_url = base_url.end_with?('/') ? base_url : "#{base_url}/"
+        normalized_uri = uri.start_with?('/') ? uri[1..] : uri
         @url = build_uri_with_query(
-          (base_url.nil? ? Rottomation::Config::Configuration.config['environment']['base_url'] : base_url) + uri,
+          (base_url.nil? ? Rottomation::Config::Configuration.config['environment']['base_url'] : base_url) + normalized_uri,
           query
         )
         @default_wait = Selenium::WebDriver::Wait.new(timeout: 3,
