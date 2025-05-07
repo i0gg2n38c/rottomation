@@ -8,14 +8,11 @@ module Rottomation
 
       attr_reader :driver, :url
 
-      def initialize(driver:, base_url: nil, uri: '', query: [])
+      def initialize(driver:, protocol: 'https://', base_url: nil, uri: '', query: [])
         @driver = driver
-        @base_url = base_url.end_with?('/') ? base_url : "#{base_url}/"
-        normalized_uri = uri.start_with?('/') ? uri[1..] : uri
-        @url = build_uri_with_query(
-          (base_url.nil? ? Rottomation::Config::Configuration.config['environment']['base_url'] : base_url) + normalized_uri,
-          query
-        )
+        raw_url = base_url.nil? ? Rottomation::Config::Configuration.config['environment']['base_url'] : base_url
+        @base_url = protocol + Rottomation.normalize_url(url: "#{raw_url}#{uri}")
+        @url = build_uri_with_query(@base_url, query)
         @default_wait = Selenium::WebDriver::Wait.new(timeout: 3,
                                                       interval: 0.1,
                                                       ignore: Selenium::WebDriver::Error::StaleElementReferenceError)

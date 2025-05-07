@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 module Rottomation
-  # HttpService - The base Service class used by inheritors.
-  # Intent is for each service to be stateless - with all methods in inheritors building a Rottomation::HttpRequest to
-  # pass into execute_request
+  # Core Service class for building Http Services. Handles the final net.http request building,
+  # execution, and processing of the provided Rottomation::HttpRequest object, with automatic
+  # logging applied.
   class HttpService
+    # Executres the provided request object, logging details about it's execution
+    #
+    # @param [Rottomation::Logger]
+    # @param [Rottomation::HttpRequest]
+    # @return [Rottomation::HttpResponse]
     def self.execute_request(logger:, request:)
       url = URI(request.url)
       http = Net::HTTP.new(url.host, url.port)
@@ -12,7 +17,7 @@ module Rottomation
       perform_call(logger: logger, http: http, request: request)
     end
 
-    def self.perform_call(logger:, http:, request:) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+    def self.perform_call(logger:, http:, request:)
       logger.log_info log: "Firing request #{request.method_type}"
       logger.log_info log: "  to '#{request.url}'"
       logger.log_info log: "  with headers: #{JSON.pretty_generate(request.headers)}"
@@ -31,6 +36,9 @@ module Rottomation
       raise e
     end
 
+    # Takes the given Rottomation::HttpRequest object and returns a prepared net.HTTP object.
+    # @param [Rottomation::HttpRequest]
+    # @return [Net::HTTP]
     def self.get_net_http_for_request(request:)
       api = case request.method_type
             when :get then Net::HTTP::Get.new(request.url)
@@ -46,11 +54,22 @@ module Rottomation
         api[key] = val
       end
 
-      # we should do this based on the content-type of the headers I think.
-      api.body = request.body.to_json unless request.body.nil?
+      api.body = prepare_body_for_request(request: request) unless request.body.nil?
       api
     end
 
-    private_class_method :perform_call, :get_net_http_for_request
+    def self.json_content_type?(headers)
+      headers.any? do |name, value|
+        name.to_s.downcase == 'content-type' && value.to_s.downcase.include?('application/json')
+      end
+    end
+
+    def self.prepare_body_for_request(request:)
+      request.body.to_json if json_content_type?(request.headers)
+      request.body&.to_s
+      nil
+    end
+
+    private_class_method :perform_call, :get_net_http_for_request, :prepare_body_for_request, :json_content_type?
   end
 end

@@ -31,6 +31,10 @@ module Rottomation
       self.configuration = Configuration.new
     end
   end
+
+  def self.normalize_url(url:)
+    url.gsub('https://', '').gsub('http://', '').gsub('//', '/')
+  end
 end
 
 # Set default configuration

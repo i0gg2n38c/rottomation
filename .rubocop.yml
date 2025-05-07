@@ -1,2 +1,4 @@
 require:
   - rubocop-rspec
+Metrics/MethodLength:
+  Max: 30
