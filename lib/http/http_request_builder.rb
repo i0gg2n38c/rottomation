@@ -55,8 +55,8 @@ module Rottomation
     # @param params_hash [Hash] Hash of parameter names and values to add
     # @return [HttpRequestBuilder] Returns self for method chaining
     # @note This method merges with existing parameters rather than replacing them.
-    def with_url_params(params_hash)
-      @url_params.merge!(params_hash)
+    def with_url_params(params_hash, condition_to_include: true)
+      @url_params.merge!(params_hash) if condition_to_include
       self
     end
 
