@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# require 'base64'
-
 module Rottomation
+  # Container class for holding Authetication context. provides storage for cookies, token auth, and automatically
+  # generates Basic auth when needed.
   class AuthContext
     attr_reader :session_cookies, :token, :username, :password
 

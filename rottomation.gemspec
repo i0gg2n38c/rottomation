@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |s|
+  s.required_ruby_version = '>= 3.3.7'
   s.name        = 'rottomation'
   s.version     = '0.1.0'
   s.summary     = 'Ruby Automation Framework'
@@ -9,8 +10,8 @@ Gem::Specification.new do |s|
   s.email       = 'email@email.net'
   s.files       = Dir['lib/**/*', 'LICENSE', 'README.md']
   s.require_paths = ['lib']
-  s.homepage    = 'https://github.com/404'
-  s.license     = 'MIT'
+  s.homepage    = 'https://github.com/i0gg2n38c/rottomation'
+  s.license     = 'Illegally Licensed Material'
 
   s.add_dependency 'money'
   s.add_dependency 'nokogiri'

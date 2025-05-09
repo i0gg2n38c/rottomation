@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Rottomation
+  # Class to represent an Http Request
   class HttpRequest
     attr_reader :url, :method_type, :headers, :body
 

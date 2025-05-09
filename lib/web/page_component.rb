@@ -2,7 +2,8 @@
 
 module Rottomation
   module Pages
-    # Top Level Comment
+    # Base page component for defining common/repeatable object types that are shared across
+    # multiple pages.
     class PageComponent
       attr_reader :driver, :page
 

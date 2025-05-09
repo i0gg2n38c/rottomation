@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Rottomation
-  # Comment
+  # Base class for handling different Request and Response entities
   class Entity
     def to_s
       JSON.pretty_generate(to_hash)

@@ -7,7 +7,7 @@ require_relative 'spec_helper'
 ##############################################################################################################
 class DuckDuckGoHomePage < Rottomation::Pages::Page
   def initialize(driver:)
-    super(driver: driver, base_url: 'https://duckduckgo.com/')
+    super(driver:, base_url: 'https://duckduckgo.com/')
   end
 
   def type_search_and_hit_enter(query:)
@@ -28,7 +28,7 @@ end
 
 class GoogleHomePage < Rottomation::Pages::Page
   def initialize(driver:)
-    super driver: driver, uri: ''
+    super driver:, uri: ''
   end
 end
 
@@ -44,7 +44,7 @@ class PostmanBasicAuthEchoService < Rottomation::HttpService
                                              .with_header('Authorization', auth_context.basic_auth)
                                              .build
 
-    execute_request(logger: logger, request: request)
+    execute_request(logger:, request:)
   end
 end
 
@@ -52,13 +52,13 @@ class JsonPlaceHolderService < Rottomation::HttpService
   BASE_URL = 'https://jsonplaceholder.typicode.com/'
 
   def self.posts(logger:)
-    resp = fetch_posts(logger: logger)
+    resp = fetch_posts(logger:)
     json_resp = JSON.parse(resp.body)
     json_resp.map { |entry| Post.new(entry) }
   end
 
   def self.post(logger:, id:)
-    resp = fetch_post(logger: logger, id: id)
+    resp = fetch_post(logger:, id:)
     Post.new(JSON.parse(resp.body))
   end
 
@@ -66,7 +66,7 @@ class JsonPlaceHolderService < Rottomation::HttpService
     request = Rottomation::HttpRequestBuilder.new(url: "#{BASE_URL}comments/", method_type: :get)
                                              .build
 
-    resp = execute_request(logger: logger, request: request)
+    resp = execute_request(logger:, request:)
     JSON.parse(resp.body).map { |comment| Comment.new(comment) }
   end
 
@@ -75,7 +75,7 @@ class JsonPlaceHolderService < Rottomation::HttpService
                                              .with_url_param('postId', post_id)
                                              .build
 
-    resp = execute_request(logger: logger, request: request)
+    resp = execute_request(logger:, request:)
     JSON.parse(resp.body).map { |comment| Comment.new(comment) }
   end
 
@@ -87,7 +87,7 @@ class JsonPlaceHolderService < Rottomation::HttpService
                                              .with_json_body(post)
                                              .build
 
-    resp = execute_request(logger: logger, request: request)
+    resp = execute_request(logger:, request:)
     Post.new(JSON.parse(resp.body))
   end
 
@@ -117,13 +117,13 @@ class JsonPlaceHolderService < Rottomation::HttpService
   def self.fetch_posts(logger:)
     request = Rottomation::HttpRequestBuilder.new(url: "#{BASE_URL}posts", method_type: :get)
                                              .build
-    execute_request(logger: logger, request: request)
+    execute_request(logger:, request:)
   end
 
   def self.fetch_post(logger:, id:)
     request = Rottomation::HttpRequestBuilder.new(url: "#{BASE_URL}posts/#{id}", method_type: :get)
                                              .build
-    execute_request(logger: logger, request: request)
+    execute_request(logger:, request:)
   end
 
   private_class_method :fetch_posts, :fetch_post
@@ -132,7 +132,7 @@ end
 ##############################################################################################################
 ######################################## Tests ###############################################################
 ##############################################################################################################
-RSpec.describe Rottomation::IO::RottomationDriverWrapper do # rubocop:disable RSpec/MultipleDescribes
+RSpec.describe Rottomation::RottomationDriverWrapper do # rubocop:disable RSpec/MultipleDescribes
   let(:ldw) { described_class.new(test_name: described_class.to_s) }
 
   after { ldw.driver_instance&.quit }
@@ -145,7 +145,7 @@ RSpec.describe Rottomation::IO::RottomationDriverWrapper do # rubocop:disable RS
 end
 
 RSpec.describe Rottomation::Pages::Page do
-  let(:ldw) { Rottomation::IO::RottomationDriverWrapper.new test_name: described_class.to_s }
+  let(:ldw) { Rottomation::RottomationDriverWrapper.new test_name: described_class.to_s }
 
   after { ldw.driver_instance&.quit }
 
@@ -160,37 +160,37 @@ RSpec.describe Rottomation::Pages::Page do
 end
 
 RSpec.describe PostmanBasicAuthEchoService do
-  let(:logger) { Rottomation::IO::RottomationLogger.new test_name: described_class.to_s }
+  let(:logger) { Rottomation::RottomationLogger.new test_name: described_class.to_s }
   let(:context) { Rottomation::AuthContext.new(username: 'postman', password: 'password') }
 
   example 'It can authenticate with Basic Auth leveraging a session context' do
-    resp = described_class.get(logger: logger, auth_context: context)
+    resp = described_class.get(logger:, auth_context: context)
     expect(resp.code).to eq 302
     expect(resp.body).to include('Found.')
   end
 end
 
 RSpec.describe JsonPlaceHolderService do
-  let(:logger) { Rottomation::IO::RottomationLogger.new test_name: described_class.to_s }
+  let(:logger) { Rottomation::RottomationLogger.new test_name: described_class.to_s }
 
   example 'It returns a list of posts' do
-    resp = described_class.posts(logger: logger)
+    resp = described_class.posts(logger:)
     expect(resp[0].id).to eq 1
   end
 
   example 'It returns a single post' do
-    resp = described_class.post(logger: logger, id: 1)
+    resp = described_class.post(logger:, id: 1)
     expect(resp.id).to eq 1
   end
 
   example 'It returns a single post' do
-    resp = described_class.comments_for_post(logger: logger, post_id: 1)
+    resp = described_class.comments_for_post(logger:, post_id: 1)
     expect(resp[0].id).to eq 1
   end
 
   example 'It supports creating a new Post' do
     post_title = 'title'
-    resp = described_class.new_post(logger: logger, post: { title: post_title, body: 'body', userId: 1 })
+    resp = described_class.new_post(logger:, post: { title: post_title, body: 'body', userId: 1 })
     expect(resp.id).not_to be_nil
     expect(resp.title).to eq post_title
   end

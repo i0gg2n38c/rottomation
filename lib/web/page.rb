@@ -2,7 +2,8 @@
 
 module Rottomation
   module Pages
-    # Top Level Comment
+    # Base page class for other pages to inherit from. Centralizes most interactions to limit
+    # having to address the driver directly when implementing other page classes.
     class Page
       QUERY_PARSER = URI::Parser.new
 

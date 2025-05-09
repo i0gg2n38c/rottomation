@@ -7,7 +7,9 @@ require 'nokogiri'
 require 'selenium-webdriver'
 
 # Require all components of the automation framework
-require_relative 'requires'
+Dir[File.join(File.dirname(__FILE__), '**', '*.rb')].sort.each do |file|
+  require file unless File.expand_path(file) == File.expand_path(__FILE__)
+end
 
 # Main module for the automation framework
 module Rottomation
