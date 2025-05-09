@@ -5,6 +5,20 @@ module Rottomation
   # execution, and processing of the provided Rottomation::HttpRequest object, with automatic
   # logging applied.
   class HttpService
+    # Takes the provided HttpResponse entity headers and collects the cookies into a Hash
+    # @param response [Rottomation::HttpResponse]
+    # @return [Hash] Hash of the collected 'set-cookie' headers.
+    def self.get_cookies_from_response(response:)
+      cookies = {}
+      response.headers.each do |header_name, cookie|
+        next unless header_name == 'set-cookie'
+
+        (k, v) = cookie.split('=')
+        cookies[k] = v
+      end
+      cookies
+    end
+
     # Executres the provided request object, logging details about it's execution
     #
     # @param [Rottomation::Logger]
@@ -54,22 +68,23 @@ module Rottomation
         api[key] = val
       end
 
-      api.body = prepare_body_for_request(request: request) unless request.body.nil?
+      api.body = request.body.to_json if json_content_type?(request: request)
+      api.set_form_data(request.body) if html_form_content_type?(request: request)
       api
     end
 
-    def self.json_content_type?(headers)
-      headers.any? do |name, value|
+    def self.json_content_type?(request:)
+      request.headers.any? do |name, value|
         name.to_s.downcase == 'content-type' && value.to_s.downcase.include?('application/json')
       end
     end
 
-    def self.prepare_body_for_request(request:)
-      request.body.to_json if json_content_type?(request.headers)
-      request.body&.to_s
-      nil
+    def self.html_form_content_type?(request:)
+      request.headers.any? do |name, value|
+        name.to_s.downcase == 'content-type' && value.to_s.downcase.include?('application/x-www-form-urlencoded')
+      end
     end
 
-    private_class_method :perform_call, :get_net_http_for_request, :prepare_body_for_request, :json_content_type?
+    private_class_method :perform_call, :get_net_http_for_request, :json_content_type?, :html_form_content_type?
   end
 end

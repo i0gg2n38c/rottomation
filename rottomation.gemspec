@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.add_dependency 'money'
+  s.add_dependency 'nokogiri'
   s.add_dependency 'selenium-webdriver'
   s.add_development_dependency 'debase'
   s.add_development_dependency 'parallel_tests'

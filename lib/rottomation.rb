@@ -3,6 +3,7 @@
 require 'net/http'
 require 'json'
 require 'time'
+require 'nokogiri'
 require 'selenium-webdriver'
 
 # Require all components of the automation framework
