@@ -60,12 +60,23 @@ module Rottomation
       self
     end
 
+    # TODO: Do we need to keep this generic body method?
     # Adds the body to the request object
     #
     # @param body [Object] entity that we are using for the request
     # @return [HttpRequestBuilder] Returns self for method chaining
-    def with_body(body)
+    # def with_body(body)
+    #   @body = body
+    #   self
+    # end
+
+    # Adds a form body to the request object
+    #
+    # @param body [Object] entity that we are using for the request
+    # @return [HttpRequestBuilder] Returns self for method chaining
+    def with_form_body(body)
       @body = body
+      with_header('Content-Type', 'application/x-www-form-urlencoded')
       self
     end
 

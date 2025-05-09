@@ -84,7 +84,7 @@ class JsonPlaceHolderService < Rottomation::HttpService
     #  the return vs the whole Post entity.
     request = Rottomation::HttpRequestBuilder.new(url: "#{BASE_URL}posts", method_type: :post)
                                              .with_header('Content-Type', 'application/json; charset=UTF-8')
-                                             .with_body(post)
+                                             .with_json_body(post)
                                              .build
 
     resp = execute_request(logger: logger, request: request)
