@@ -1,6 +1,7 @@
 selenium:
   grid_url: 'http://172.18.0.2:4444/wd/hub'
 environment:
+  protocol: 'https://'
   base_url: 'https://duckduckgo.com/'
   head_on: true
   verbose_logging: true

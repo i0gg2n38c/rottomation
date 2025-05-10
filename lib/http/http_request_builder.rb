@@ -8,8 +8,11 @@ module Rottomation
   #             .with_url_param('limit', 10)
   #             .build
   class HttpRequestBuilder
-    def initialize(url:, method_type:, protocol: 'https://')
-      @url = protocol + Rottomation.normalize_url(url: url)
+    def initialize(url:, method_type:, protocol: nil)
+      # Grab the protocol from the configuration file if it's there, otherwise default to https if it's
+      # not provided as a parameter
+      protocol = Rottomation::Config::Configuration.config['environment']['protocol'] || 'https://' if protocol.nil?
+      @url = protocol + Rottomation.normalize_url(url:)
       @method_type = method_type
       @headers = {}
       @url_params = {}
@@ -130,7 +133,7 @@ module Rottomation
       end
 
       # Return a hash representing the request
-      Rottomation::HttpRequest.new(url: url, method_type: @method_type, headers: @headers, body: @body)
+      Rottomation::HttpRequest.new(url:, method_type: @method_type, headers: @headers, body: @body)
     end
 
     def base_url(url)
