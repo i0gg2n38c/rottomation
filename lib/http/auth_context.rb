@@ -11,6 +11,7 @@ module Rottomation
       @password = password
       @token = nil
       @session_cookies = nil
+      @csrf = nil
     end
 
     def with_token(token:)
@@ -20,6 +21,11 @@ module Rottomation
 
     def with_session_cookies(session_cookies:)
       @session_cookies = session_cookies
+      self
+    end
+
+    def with_csrf(csrf:)
+      @csrf = csrf
       self
     end
 

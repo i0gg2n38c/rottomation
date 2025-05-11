@@ -5,20 +5,6 @@ module Rottomation
   # execution, and processing of the provided Rottomation::HttpRequest object, with automatic
   # logging applied.
   class HttpService
-    # Takes the provided HttpResponse entity headers and collects the cookies into a Hash
-    # @param response [Rottomation::HttpResponse]
-    # @return [Hash] Hash of the collected 'set-cookie' headers.
-    def self.get_cookies_from_response(response:)
-      cookies = {}
-      response.headers.each do |header_name, cookie|
-        next unless header_name == 'set-cookie'
-
-        (k, v) = cookie.split('=')
-        cookies[k] = v
-      end
-      cookies
-    end
-
     # Executres the provided request object, logging details about it's execution
     #
     # @param [Rottomation::Logger]
@@ -28,7 +14,7 @@ module Rottomation
       url = URI(request.url)
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = url.scheme == 'https'
-      perform_call(logger: logger, http: http, request: request)
+      perform_call(logger:, http:, request:)
     end
 
     def self.perform_call(logger:, http:, request:)
@@ -36,7 +22,7 @@ module Rottomation
       logger.log_info log: "  to '#{request.url}'"
       logger.log_info log: "  with headers: #{JSON.pretty_generate(request.headers)}"
       logger.log_info log: "With body: #{request.body}" unless request.body.nil?
-      response = http.request(get_net_http_for_request(request: request))
+      response = http.request(get_net_http_for_request(request:))
       logger.log_info log: "response code: #{response.code}"
       Rottomation::HttpResponse.new(code: response.code.to_i, headers: response.each_header.to_a, body: response.body)
     rescue SocketError => e
@@ -68,8 +54,8 @@ module Rottomation
         api[key] = val
       end
 
-      api.body = request.body.to_json if json_content_type?(request: request)
-      api.set_form_data(request.body) if html_form_content_type?(request: request)
+      api.body = request.body.to_json if json_content_type?(request:)
+      api.set_form_data(request.body) if html_form_content_type?(request:)
       api
     end
 
