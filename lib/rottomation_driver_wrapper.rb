@@ -12,7 +12,7 @@ module Rottomation
       @grid_hub_url = Rottomation::Config::Configuration.config['selenium']['grid_url']
 
       log_info log: "Using Environment: #{environment_url}}"
-      log_info log: "Using Grid Bub: #{environment_url}}"
+      log_info log: "Using Grid Hub at: #{grid_hub_url}}"
       log_info log: 'Laucnhing WebDriver Instance'
       @driver_instance = Selenium::WebDriver.for(:remote,
                                                  url: @grid_hub_url,

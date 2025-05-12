@@ -9,7 +9,8 @@ module Rottomation
 
       attr_reader :driver, :url
 
-      def initialize(driver:, protocol: 'https://', base_url: nil, uri: '', query: [])
+      def initialize(driver:, protocol: nil, base_url: nil, uri: '', query: [])
+        protocol = Rottomation::Config::Configuration.config['environment']['protocol'] || 'https://' if protocol.nil?
         @driver = driver
         raw_url = base_url.nil? ? Rottomation::Config::Configuration.config['environment']['base_url'] : base_url
         @base_url = protocol + Rottomation.normalize_url(url: "#{raw_url}#{uri}")
@@ -29,13 +30,12 @@ module Rottomation
 
       def find_element(element_name:, **locator)
         @driver.wait_for_element(**locator)
-        @driver.find_element(**locator, element_name: element_name)
+        @driver.find_element(**locator, element_name:)
       end
 
       def find_elements(element_name:, **locator)
         @default_wait.until { !@driver.driver_instance.find_elements(locator).empty? }
-        @driver.find_elements(**locator,
-                              element_name: element_name)
+        @driver.find_elements(**locator, element_name:)
       end
 
       def move_to_element(element:, element_name:, should_try_scrolling_up: false) # rubocop:disable Metrics/AbcSize
@@ -54,19 +54,19 @@ module Rottomation
 
         @driver.log_info log: "Y coordinate is negative: #{y}, scrolling up and retrying"
         @driver.driver_instance.action.scroll_by(0, -250).pause(duration: 1).perform
-        move_to_element(element: element, element_name: element_name, should_try_scrolling_up: false)
+        move_to_element(element:, element_name:, should_try_scrolling_up: false)
       end
 
       def send_text_and_hit_enter(element:, element_name:, content:)
         @driver.log_info(log: "Sending input \"#{content}\" to field: \"#{element_name}\"")
-        @driver.submit_text(element: element, element_name: element_name, content: content,
+        @driver.submit_text(element:, element_name:, content:,
                             additional_chars: Selenium::WebDriver::Keys::KEYS[:return])
         self
       end
 
       def set_text(element:, element_name:, content:)
         @driver.log_info(log: "Sending input \"#{content}\" to field: \"#{element_name}\"")
-        @driver.submit_text(element: element, element_name: element_name, content: content)
+        @driver.submit_text(element:, element_name:, content:)
         self
       end
 
