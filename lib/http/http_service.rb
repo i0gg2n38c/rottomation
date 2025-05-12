@@ -17,6 +17,14 @@ module Rottomation
       perform_call(logger:, http:, request:)
     end
 
+    # Raises an exception if the provided HttpResponse entity does not match the provided expected
+    # value
+    # @param expected [int] expected response code
+    # @param resp [Rottomation::HttpResponse] the response we are validating
+    def self.verify_response_code(expected:, response:)
+      raise "Expected response code of #{expected}, got: #{response.code}" if response.code != expected
+    end
+
     def self.perform_call(logger:, http:, request:)
       logger.log_info log: "Firing request #{request.method_type}"
       logger.log_info log: "  to '#{request.url}'"
