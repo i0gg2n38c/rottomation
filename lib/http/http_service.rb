@@ -36,7 +36,8 @@ module Rottomation
       logger.log_info log: "With body: #{request.body}" unless request.body.nil?
       response = http.request(get_net_http_for_request(request:))
       logger.log_info log: "response code: #{response.code}"
-      Rottomation::HttpResponse.new(code: response.code.to_i, headers: response.each_header.to_a, body: response.body)
+      Rottomation::HttpResponse.new(code: response.code.to_i, headers: response.each_header.to_a,
+                                    cookies: response.get_fields('Set-Cookie'), body: response.body)
     rescue SocketError => e
       logger.log_info log: "Failed to connect: #{e.message}"
       raise e

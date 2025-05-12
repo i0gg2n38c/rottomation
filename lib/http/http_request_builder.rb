@@ -119,7 +119,7 @@ module Rottomation
     def build
       # Apply cookies to headers
       unless @cookies.empty?
-        cookie_string = @cookies.map { |name, value| "#{name}=#{value}" }.join('; ')
+        cookie_string = @cookies.map { |name, value| "#{name}=#{value}" }.join(';').split(';').uniq.join('; ')
         @headers['Cookie'] = cookie_string
       end
 
