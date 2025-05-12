@@ -4,7 +4,7 @@ module Rottomation
   # Container class for holding Authetication context. provides storage for cookies, token auth, and automatically
   # generates Basic auth when needed.
   class AuthContext
-    attr_reader :session_cookies, :token, :username, :password
+    attr_reader :session_cookies, :token, :username, :password, :csrf
 
     def initialize(username: nil, password: nil)
       @username = username
