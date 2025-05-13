@@ -15,5 +15,9 @@ module Rottomation
         @cookies[name] = value
       end
     end
+
+    def parse_body_as_json
+      JSON.parse(@body, symbolize_names: true)
+    end
   end
 end
