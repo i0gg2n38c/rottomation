@@ -20,10 +20,6 @@ module Rottomation
       end
     end
 
-    def build
-      raise NotImplementedError, 'Class needs to override build method'
-    end
-
     def self.construct_methods_and_readers(bool_params:, non_bool_params:)
       @have_methods_been_constructed = true
 
@@ -36,6 +32,10 @@ module Rottomation
           self
         end
       end
+    end
+
+    def build
+      raise NotImplementedError, 'Class needs to override build method'
     end
   end
 end
