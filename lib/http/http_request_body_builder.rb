@@ -20,7 +20,7 @@ module Rottomation
       end
     end
 
-    def self.construct_methods_and_readers(bool_params:, non_bool_params:)
+    def self.construct_methods_and_readers(bool_params: [], non_bool_params: [])
       @have_methods_been_constructed = true
 
       (bool_params + non_bool_params).each do |param|
