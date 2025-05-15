@@ -20,7 +20,7 @@ module Rottomation
       end
     end
 
-    def self.construct_methods_and_readers(bool_params: [], non_bool_params: [], required_params: []) # TODO
+    def self.construct_methods_and_readers(bool_params: [], non_bool_params: [], required_params: [])
       @have_methods_been_constructed = true
 
       (bool_params + non_bool_params).each do |param|
@@ -37,7 +37,10 @@ module Rottomation
         body = {}
         ((bool_params + non_bool_params)).each do |param|
           val = instance_variable_get("@#{param}")
-          raise ArgumentError, "Missing required parameter: #{param}" if param.nil? && required_params.include?(param)
+          if val.nil? && required_params.include?(param)
+            raise ArgumentError,
+                  "Missing required parameter: \"#{param}\"\nRequired parameters: #{required_params}"
+          end
 
           body[param.to_sym] = val unless val.nil?
         end
