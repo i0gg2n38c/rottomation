@@ -20,7 +20,7 @@ module Rottomation
       end
     end
 
-    def self.construct_methods_and_readers(bool_params: [], non_bool_params: [])
+    def self.construct_methods_and_readers(bool_params: [], non_bool_params: [], required_params: []) # TODO
       @have_methods_been_constructed = true
 
       (bool_params + non_bool_params).each do |param|
@@ -32,10 +32,17 @@ module Rottomation
           self
         end
       end
-    end
 
-    def build
-      raise NotImplementedError, 'Class needs to override build method'
+      define_method(:build) do
+        body = {}
+        ((bool_params + non_bool_params)).each do |param|
+          val = instance_variable_get("@#{param}")
+          raise ArgumentError, "Missing required parameter: #{param}" if param.nil? && required_params.include?(param)
+
+          body[param] = val unless val.nil?
+        end
+        body
+      end
     end
   end
 end
