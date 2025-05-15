@@ -127,7 +127,15 @@ module Rottomation
       url = @url
       unless @url_params.empty?
         query_string = @url_params.map do |name, value|
-          "#{URI.encode_www_form_component(name.to_s)}=#{URI.encode_www_form_component(value.to_s)}"
+          if value.is_a?(Array)
+            # If the value we hit is an array style param, we just map the whole thing, then continue with the rest of
+            # the url params
+            value.map do |array_val|
+              "#{URI.encode_www_form_component(name.to_s)}=#{URI.encode_www_form_component(array_val.to_s)}"
+            end.join('&')
+          else
+            "#{URI.encode_www_form_component(name.to_s)}=#{URI.encode_www_form_component(value.to_s)}"
+          end
         end.join('&')
         url += (url.include?('?') ? '&' : '?') + query_string
       end
