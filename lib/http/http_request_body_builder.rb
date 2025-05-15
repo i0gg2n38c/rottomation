@@ -39,7 +39,7 @@ module Rottomation
           val = instance_variable_get("@#{param}")
           raise ArgumentError, "Missing required parameter: #{param}" if param.nil? && required_params.include?(param)
 
-          body[param] = val unless val.nil?
+          body[param.to_sym] = val unless val.nil?
         end
         body
       end
