@@ -33,11 +33,11 @@ module Rottomation
         end
       end
 
-      define_method(:build) do
+      define_method(:build) do |ignore_missing_required_params = false|
         body = {}
         ((bool_params + non_bool_params)).each do |param|
           val = instance_variable_get("@#{param}")
-          if val.nil? && required_params.include?(param)
+          if ignore_missing_required_params && val.nil? && required_params.include?(param)
             raise ArgumentError,
                   "Missing required parameter: \"#{param}\"\nRequired parameters: #{required_params}"
           end
